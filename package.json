@@ -2,8 +2,10 @@
   "dependencies": {
     "console.table": "^0.10.0",
     "dotenv": "^16.0.3",
+    "figlet": "^1.5.2",
     "inquirer": "^8.2.4",
-    "mysql2": "^3.0.1"
+    "mysql2": "^3.0.1",
+    "validator": "^13.7.0"
   },
   "scripts": {
     "start": "node server.js"
@@ -15,7 +17,6 @@
   "directories": {
     "test": "test"
   },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Akshatha2022/EmployeeTracker.git"
