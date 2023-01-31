@@ -1,19 +1,19 @@
 // const connection = require('./config/connection');
-const inquirer = require('inquirer');
-const cTable = require('console.table');
-const chalk = require('chalk');
-const figlet = require('figlet');
-const validate = require('./javascript/validate');
-const mysql = require('mysql2');
+const inquirer = require("inquirer");
+require("console.table");
+const chalk = require("chalk");
+const figlet = require("figlet");
+const validate = require("./javascript/validate");
+const mysql = require("mysql2");
 
-require('dotenv').config();
+require("dotenv").config();
 // console.log (process.env.DB_PASSWORD)
 const connection = mysql.createConnection({
-  host: 'localhost',
+  host: "localhost",
   port: 3306,
-  user: 'root',
+  user: "root",
   password: process.env.DB_PASSWORD,
-  database: 'employees'
+  database: "employees"
 });
 
 // // Database Connect and Starter Title
@@ -21,7 +21,7 @@ connection.connect((error) => {
   if (error) throw error;
   console.log(chalk.yellow.bold(`====================================================================================`));
   console.log(``);
-  console.log(chalk.greenBright.bold(figlet.textSync('Employee Tracker')));
+  console.log(chalk.greenBright.bold(figlet.textSync("Employee Tracker")));
   console.log(``);
   console.log(`                                                          ` + chalk.greenBright.bold('Created By: Akshatha'));
   console.log(``);
@@ -31,86 +31,86 @@ connection.connect((error) => {
 
 // Prompt User for Choices
 const promptUser = () => {
-  inquirer.prompt([
-      {
-        name: 'choices',
-        type: 'list',
-        message: 'What would you like to do today?',
+  inquirer.prompt({
+      
+        name: "choices",
+        type: "list",
+        message: "What would you like to do today?",
         choices: [
-          'View All Employees',
-          'View All Roles',
-          'View All Departments',
-          'View All Employees By Department',
-          'View Department Budgets',
-          'Update Employee Role',
-          'Update Employee Manager',
-          'Add Employee',
-          'Add Role',
-          'Add Department',
-          'Delete Employee',
-          'Delete Role',
-          'Delete Department',
-          'Exit Menu'
-          ]
-      }
-    ])
+          "View All Employees",
+          "View All Roles",
+          "View All Departments",
+          "View All Employees By Department",
+          "View Department Budgets",
+          "Update Employee Role",
+          "Update Employee Manager",
+          "Add Employee",
+          "Add Role",
+          "Add Department",
+          "Delete Employee",
+          "Delete Role",
+          "Delete Department",
+          "Exit Menu"
+          ],
+      
+})
     .then((answers) => {
       // When we are selecting an option, if it matches it will run the below function
       const {choices} = answers;
 
-        if (choices === 'View All Employees') {
+        if (choices === "View All Employees") {
             viewEmployees();
         }
 
-        if (choices === 'View All Departments') {
+        if (choices === "View All Departments") {
           viewAllDepartments();
       }
 
-        if (choices === 'View All Employees By Department') {
+        if (choices === "View All Employees By Department") {
             viewEmployeesByDepartment();
         }
 
-        if (choices === 'Add Employee') {
+        if (choices === "Add Employee") {
             addEmployee();
         }
 
-        if (choices === 'Remove Employee') {
+        if (choices === "Remove Employee") {
             removeEmployee();
         }
 
-        if (choices === 'Update Employee Role') {
+        if (choices === "Update Employee Role") {
             updateEmployeeRole();
         }
 
-        if (choices === 'Update Employee Manager') {
+        if (choices === "Update Employee Manager") {
             updateEmployeeManager();
         }
 
-        if (choices === 'View All Roles') {
+        if (choices === "View All Roles") {
             viewAllRoles();
         }
 
-        if (choices === 'Add Role') {
+        if (choices === "Add Role") {
             addRole();
         }
 
-        if (choices === 'Remove Role') {
+        if (choices === "Remove Role") {
             removeRole();
         }
 
-        if (choices === 'Add Department') {
+        if (choices === "Add Department") {
             addDepartment();
         }
 
-        if (choices === 'View Department Budgets') {
+        if (choices === "View Department Budgets") {
             viewDepartmentBudget();
         }
 
-        if (choices === 'Remove Department') {
+        if (choices === "Remove Department") {
             removeDepartment();
         }
 
-        if (choices === 'Exit') {
+        if (choices === "Exit") {
             connection.end();
         }
   });
@@ -193,23 +193,22 @@ const viewDepartmentBudget = () => {
 // Add a New Employee
 const addEmployee = () => {
 
-  connection.query("SELECT * FROM role", roleSql, (error, data) => {
-    if (error) throw error; 
-    const roles = data.map(({ id, title }) =>
-    
-    ({ 
-      name: title, 
-      value: id 
-    })
-    );
-
+  connection.query("SELECT * FROM role",(error, data) => {
+    if (error) console.log(error); 
+    roles = data.map((role) => {
+      return {
+      name: role.title, 
+      value: role.id,
+      };
+    });
+  
   inquirer
   .prompt([
     {
-      type: 'input', // it moves ahead with the appropriate questions based on the selection
-      name: 'fistName',
+      type: "input", // it moves ahead with the appropriate questions based on the selection
+      name: "fistName",
       message: "What is the employee's first name?",
-      validate: addFirstName => {
+      validate: (addFirstName) => {
         if (addFirstName) {
             return true;
         } else {
@@ -218,8 +217,8 @@ const addEmployee = () => {
       }
     }, // it validates and will only continue if it gets an input
     {
-      type: 'input',
-      name: 'lastName',
+      type: "input",
+      name: "lastName",
       message: "What is the employee's last name?",
       validate: addLastName => {
         if (addLastName) {
@@ -227,62 +226,44 @@ const addEmployee = () => {
         } else {
           return "I need input or an answer to continue"
         }
-      }
-    }
-  ])
-    .then(answer => {
-      console.log(answer.role)
-    connection.query(roleSql, (error, data) => {
-      if (error) throw error; 
-      const roles = data.map(({ id, title }) => ({ 
-        
-        name: title, 
-        value: id 
-      
-      })
-      );
+      },
+    },
+    {
+      type: "list",
+      name: "role",
+      message: "What is the employee's role?",
+      choices: roles,
 
-     [
-            {
-              type: 'list',
-              name: 'role',
-              message: "What is the employee's role?",
-              choices: roles,
+      validate: (addRole) => {
+        if(addRole) {
+          return true;}
+          else {
+            return "I need an answer or input to continue"
+          }
+        }
+      },
+      {
+        type: "list", 
+        name: "managerId",
+        message: "select a manager id for the new employee?",
+        choices: [1, 2, 3, 4, 5],
+        validate: (manager_id) => {
+          if (manager_id) {
+            return true;
+          } else {
+            return "I need an answer to continue";
+          }
+        }, // validates, need an answer to continue
+      },
+    ])
 
-              validate: (addRole) => {
-                if(addRole) {
-                  return true;}
-                  else {
-                    return "I need an answer or input to continue"
-                  }
-                }
-              },
-            ]
-             .then(roleChoice => {
-                          const role = roleChoice.role;
-                          crit.push(role);
-                          const managerSql =  `SELECT * FROM employee`;
-                          connection.query(managerSql, (error, data) => {
-                            if (error) throw error;
-                            const managers = data.map(({ id, first_name, last_name }) => ({ name: first_name + " "+ last_name, value: id }));
-                            inquirer.prompt([
-                              {
-                                type: 'list',
-                                name: 'manager',
-                                message: "Who is the employee's manager?",
-                                choices: managers
-                              }
-                            ])
-                              .then(managerChoice => {
-                                const manager = managerChoice.manager;
-                                crit.push(manager);
-                                const sql =   `INSERT INTO employee (first_name, last_name, role_id, manager_id)
-                                              VALUES (?, ?, ?, ?)`;
-                                connection.query(sql, crit, (error) => {
-                                if (error) throw error;
-                                console.log("Employee has been added!")
-                                viewEmployees();
-                          });
+
+
+
+      )
+     }
+         
+   
               });
             });
           });
