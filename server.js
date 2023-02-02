@@ -191,74 +191,95 @@ const viewDepartmentBudget = () => {
 // --------------------------------------------------- ADD --------------------------------------------------------------------
 
 // Add a New Employee
-const addEmployee = () => {
+function addEmployee() {
+    inquirer
+      .prompt([
+        {
+          type: "input", // it moves ahead with the appropriate questions based on the selection
+          message: "What is employee's first name?",
+          name: "firstName",
+        },
+        {
+          type: "input",
+          message: "What is employee's last name?",
+          name: "lastName",
+        },
+        {
+          type: "list",
+          message: "What is the employee's roles?",
+          name: "roles",
+          choices: showroles,
+        },
+        {
+          type: "list",
+          message: "Who is the employee's manager?",
+          name: "manager",
+          choices: showemployees,
+        },
+      ])
+      .then(function (response) {
+        connection.query("SELECT * from employee", function (error, response) {
+          console.table(res);
+          promptUser();
+        });
+      });
+  }
 
-  connection.query("SELECT * FROM role",(error, data) => {
-    if (error) console.log(error); 
-    roles = data.map((role) => {
-      return {
-      name: role.title, 
-      value: role.id,
-      };
-    });
-  
-  inquirer
-  .prompt([
-    {
-      type: "input", // it moves ahead with the appropriate questions based on the selection
-      name: "fistName",
-      message: "What is the employee's first name?",
-      validate: (addFirstName) => {
-        if (addFirstName) {
-            return true;
-        } else {
-            return "I need input or an answer to continue"
-        }
+      function addRole () = {
+       
+        inquirer
+          .prompt([
+            //prompts questions
+            {
+              type: "input", // moves forward with the appropriate questions for the selected class
+              message: "What is the name of the employee you would like to add?",
+              name: "title",
+              validate: (value) => {
+                if (value) {
+                  return true;
+                } else {
+                  return "I need an answer to continue";
+                }
+              }, // validates, need an answer to continue
+            },
+            {
+              type: "input", // moves forward with the appropriate questions for the selected class
+              message: "What is the salary of the role you would like to add?",
+              name: "salary",
+              validate: (value) => {
+                if (value) {
+                  return true;
+                } else {
+                  return "I need an answer to continue";
+                }
+              }, // validates, need an answer to continue
+            },
+            {
+              type: "input", // moves forward with the appropriate questions for the selected class
+              message: "What department does the role belong to?",
+              name: "department",
+              validate: (value) => {
+                if (value) {
+                  return true;
+                } else {
+                  return "I need an answer to continue";
+                }
+              }, // validates, need an answer to continue
+            },
+          ])
+          .then(function (response) {
+            connection.query(
+              "SELECT * from employee for role",
+              function (error, res) {
+                console.table(res);
+                endMenu();
+              }
+            );
+          });
       }
-    }, // it validates and will only continue if it gets an input
-    {
-      type: "input",
-      name: "lastName",
-      message: "What is the employee's last name?",
-      validate: addLastName => {
-        if (addLastName) {
-            return true;
-        } else {
-          return "I need input or an answer to continue"
-        }
-      },
-    },
-    {
-      type: "list",
-      name: "role",
-      message: "What is the employee's role?",
-      choices: roles,
 
-      validate: (addRole) => {
-        if(addRole) {
-          return true;}
-          else {
-            return "I need an answer or input to continue"
-          }
-        }
-      },
-      {
-        type: "list", 
-        name: "managerId",
-        message: "select a manager id for the new employee?",
-        choices: [1, 2, 3, 4, 5],
-        validate: (manager_id) => {
-          if (manager_id) {
-            return true;
-          } else {
-            return "I need an answer to continue";
-          }
-        }, // validates, need an answer to continue
-      },
-    ])
-
-
-
+      //update the role prompt user
+      
 
       )
      }
