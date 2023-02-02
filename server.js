@@ -198,23 +198,60 @@ function addEmployee() {
           type: "input", // it moves ahead with the appropriate questions based on the selection
           message: "What is employee's first name?",
           name: "firstName",
+          validate: addFirstName => {
+            if (addFirstName) {
+                return true;
+            } else {
+                console.log('Please enter a first name');
+                return false;
+            }
+          }
+        
         },
         {
           type: "input",
           message: "What is employee's last name?",
           name: "lastName",
+          validate: addLastName => {
+          if (addLastName)  {
+            return true;
+        } else {
+            console.log('Please enter a last name');
+            return false;
+        }
+      }
         },
+      ])
+        .then(answer => {
+          const crit = [answer.fistName, answer.lastName]
+          const roleSql = `SELECT role.id, role.title FROM role`;
+          connection.query(roleSql, (error, data) => {
+            if (error) 
+            throw error; 
+            const roles = data.map(({ id, title }) => ({ 
+              name: title, 
+              value: id 
+            }
+            )
+            )
+            )
+          )
+        }
+      }
+
+
         {
           type: "list",
           message: "What is the employee's roles?",
+
           name: "roles",
-          choices: showroles,
+          choices: viewAllRoles,
         },
         {
           type: "list",
           message: "Who is the employee's manager?",
           name: "manager",
-          choices: showemployees,
+          choices: viewEmployees,
         },
       ])
       .then(function (response) {
@@ -225,7 +262,7 @@ function addEmployee() {
       });
   }
 
-      function addRole () = {
+      function addRole () {
        
         inquirer
           .prompt([
@@ -270,25 +307,38 @@ function addEmployee() {
           .then(function (response) {
             connection.query(
               "SELECT * from employee for role",
-              function (error, res) {
-                console.table(res);
-                endMenu();
+              function (error, response) {
+                console.table(response);
+                promptUser();
               }
             );
           });
       }
 
       //update the role prompt user
-      
-
-      )
-     }
-         
-   
-              });
-            });
+      function updateEmployeeRole() {
+        inquirer
+          .prompt([
+            {
+              type: "list",
+              message: " Which employee would you like to update the role?",
+              name: "empID",
+              choices: showemployees,
+            },
+            {
+              type: "list",
+              message: "What is the employee's new role?",
+              name: "titleID",
+              choices: roles,
+            },
+          ])
+          .then(function (response) {
+            connection.query(
+              "SELECT * from employee for update role",
+              function (error, response) {
+                console.table(response);
+                promptUser();
+              }
+            );
           });
-        });
-     });
-  });
-};
+      }
