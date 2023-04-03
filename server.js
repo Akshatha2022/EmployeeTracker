@@ -593,3 +593,42 @@ const removeRole = () => {
       });
   });
 };
+
+
+// Delete a Department
+const removeDepartment = () => {
+let sql =   `SELECT department.id, department.department_name FROM department`;
+connection.promise().query(sql, (error, reply) => {
+  if (error) throw error;
+  let departmentNamesArray = [];
+  reply.forEach((department) => {departmentNamesArray.push(department.department_name);});
+
+  inquirer
+    .prompt([
+      {
+        name: 'chosenDept',
+        type: 'list',
+        message: 'Which department would you like to remove?',
+        choices: departmentNamesArray
+      }
+    ])
+    .then((answer) => {
+      let departmentId;
+
+      response.forEach((department) => {
+        if (answer.chosenDept === department.department_name) {
+          departmentId = department.id;
+        }
+      });
+
+      let sql =     `DELETE FROM department WHERE department.id = ?`;
+      connection.promise().query(sql, [departmentId], (error) => {
+        if (error) throw error;
+        console.log(chalk.redBright.bold(`====================================================================================`));
+        console.log(chalk.redBright(`Department Successfully Removed`));
+        console.log(chalk.redBright.bold(`====================================================================================`));
+        viewAllDepartments();
+      });
+    });
+});
+};
