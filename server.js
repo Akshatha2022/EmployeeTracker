@@ -356,3 +356,26 @@ const addNewRole = () => {
     });
   };
   
+// Adding a New Department
+const addDepartment = () => {
+  inquirer
+    .prompt([
+      {
+        name: 'newDepartment',
+        type: 'input',
+        message: 'What is the name of your new Department?',
+        validate: validate.validateString
+      }
+    ])
+    .then((answer) => {
+      let sql =     `INSERT INTO department (department_name) VALUES (?)`;
+      connection.query(sql, answer.newDepartment, (error, reply) => {
+        if (error) throw error;
+        console.log(``);
+        console.log(chalk.greenBright(reply.newDepartment + ` Department successfully created!`));
+        console.log(``);
+        viewAllDepartments();
+      });
+    });
+};
+
