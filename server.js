@@ -511,3 +511,46 @@ const updateEmployeeManager = () => {
 };
 
 
+// -------------------------------------- REMOVE --------------------------------------------------------
+
+// Delete an Employee
+const removeEmployee = () => {
+  let sql =     `SELECT employee.id, employee.first_name, employee.last_name FROM employee`;
+
+  connection.promise().query(sql, (error, reply) => {
+    if (error) throw error;
+    let employeeNamesArray = [];
+    reply.forEach((employee) => {employeeNamesArray.push(`${employee.firstname} ${employee.lastname}`);});
+
+    inquirer
+      .prompt([
+        {
+          name: 'chosenEmployee',
+          type: 'list',
+          message: 'Which employee would you like to remove?',
+          choices: employeeNamesArray
+        }
+      ])
+      .then((answer) => {
+        let employeeId;
+
+        response.forEach((employee) => {
+          if (
+            answer.chosenEmployee ===
+            `${employee.firstname} ${employee.lastname}`
+          ) {
+            employeeId = employee.id;
+          }
+        });
+
+        let sql = `DELETE FROM employee WHERE employee.id = ?`;
+        connection.query(sql, [employeeId], (error) => {
+          if (error) throw error;
+          console.log(chalk.redBright.bold(`====================================================================================`));
+          console.log(chalk.redBright(`Employee Successfully Removed`));
+          console.log(chalk.RedBright.bold(`====================================================================================`));
+          viewAllEmployees();
+        });
+      });
+  });
+};
