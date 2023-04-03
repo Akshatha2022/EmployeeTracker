@@ -114,7 +114,7 @@ function mainMenu() {
           }
   
           if (selection === 'Add Role') {
-              addRole();
+              addNewRole();
           }
   
           if (selection === 'Remove Role') {
@@ -290,3 +290,69 @@ const addEmployee = () => {
      });
   });
 };
+
+
+// Add a New Role
+const addNewRole = () => {
+  const sql = 'SELECT * FROM department'
+  connection.promise().query(sql, (error, reply) => {
+      if (error) throw error;
+      let deptNamesArray = [];
+      reply.forEach((department) => {deptNamesArray.push(department.department_name);});
+      deptNamesArray.push('Create Department');
+      inquirer
+        .prompt([
+          {
+            name: 'departmentName',
+            type: 'list',
+            message: 'Which department is this new role in?',
+            choices: deptNamesArray
+          }
+        ])
+        .then((answer) => {
+          if (answer.departmentName === 'Create Department') {
+            this.addDepartment();
+          } else {
+            addRoleResume(answer);
+          }
+        });
+
+      const addRoleResume = (departmentData) => {
+        inquirer
+          .prompt([
+            {
+              name: 'newRole',
+              type: 'input',
+              message: 'What is the name of your new role?',
+              validate: validate.validateString
+            },
+            {
+              name: 'salary',
+              type: 'input',
+              message: 'What is the salary of this new role?',
+              validate: validate.validateSalary
+            }
+          ])
+          .then((answer) => {
+            let createdRole = answer.newRole;
+            let departmentId;
+
+            response.forEach((department) => {
+              if (departmentData.departmentName === department.department_name) {departmentId = department.id;}
+            });
+
+            let sql =   `INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)`;
+            let crit = [createdRole, answer.salary, departmentId];
+
+            connection.promise().query(sql, crit, (error) => {
+              if (error) throw error;
+              console.log(chalk.red.bold(`====================================================================================`));
+              console.log(chalk.greenBright(`Role successfully created!`));
+              console.log(chalk.red.bold(`====================================================================================`));
+              viewAllRoles();
+            });
+          });
+      };
+    });
+  };
+  
