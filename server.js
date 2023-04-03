@@ -180,3 +180,17 @@ const viewAllRoles = () => {
       promptUser();
   });
 };
+
+// View all Departments
+const viewAllDepartments = () => {
+  const sql =   `SELECT department.id AS id, department.department_name AS department FROM department`; 
+  connection.promise().query(sql, (error, selection) => {
+    if (error) throw error;
+    console.log(chalk.yellow.bold(`====================================================================================`));
+    console.log(`                              ` + chalk.green.bold(`All Departments:`));
+    console.log(chalk.yellow.bold(`====================================================================================`));
+    console.table(selection);
+    console.log(chalk.yellow.bold(`====================================================================================`));
+    promptUser();
+  });
+};
