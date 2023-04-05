@@ -56,8 +56,8 @@ const promptUser = () => {
                   ]
           }
       ])
-      .then((response) => {
-        const {selection} = response;
+      .then((reply) => {
+        const {selection} = reply;
   
           if (selection === 'View All Employees') {
               viewAllEmployees();
@@ -198,12 +198,12 @@ const viewEmployeesByDepartment = () => {
                   FROM employee 
                   LEFT JOIN role ON employee.role_id = role.id 
                   LEFT JOIN department ON role.department_id = department.id`;
-  connection.query(sql, (error, response) => {
+  connection.query(sql, (error, reply) => {
     if (error) throw error;
       console.log(chalk.yellow.bold(`====================================================================================`));
       console.log(`                              ` + chalk.green.bold(`Employees by Department:`));
       console.log(chalk.yellow.bold(`====================================================================================`));
-      console.table(response);
+      console.table(reply);
       console.log(chalk.yellow.bold(`====================================================================================`));
       promptUser();
     });
@@ -333,7 +333,7 @@ const addNewRole = () => {
             let createdRole = answer.newRole;
             let departmentId;
 
-            response.forEach((department) => {
+            reply.forEach((department) => {
               if (departmentData.departmentName === department.department_name) {departmentId = department.id;}
             });
 
@@ -468,7 +468,7 @@ const updateEmployeeManager = () => {
       ])
       .then((answer) => {
         let employeeId, managerId;
-        response.forEach((employee) => {
+        reply.forEach((employee) => {
           if (
             answer.chosenEmployee === `${employee.first_name} ${employee.last_name}`
           ) {
@@ -530,7 +530,7 @@ const removeEmployee = () => {
       .then((answer) => {
         let employeeId;
 
-        response.forEach((employee) => {
+        reply.forEach((employee) => {
           if (
             answer.chosenEmployee ===
             `${employee.first_name} ${employee.last_name}`
@@ -572,7 +572,7 @@ const removeRole = () => {
       .then((answer) => {
         let roleId;
 
-        response.forEach((role) => {
+        reply.forEach((role) => {
           if (answer.chosenRole === role.title) {
             roleId = role.id;
           }
@@ -611,7 +611,7 @@ connection.query(sql, (error, reply) => {
     .then((answer) => {
       let departmentId;
 
-      response.forEach((department) => {
+      reply.forEach((department) => {
         if (answer.chosenDept === department.department_name) {
           departmentId = department.id;
         }
